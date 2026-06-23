@@ -1,0 +1,30 @@
+# .gitlab-ci.yml - Linux CI pipeline (Ubuntu)
+stages:
+  - build
+  - test
+
+build:
+  image: ubuntu:22.04
+  stage: build
+  before_script:
+    - apt-get update -y
+    - apt-get install -y build-essential cmake git
+  script:
+    - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+    - cmake --build build -- -j$(nproc)
+  artifacts:
+    paths:
+      - build/
+    expire_in: 1 hour
+
+test:
+  image: ubuntu:22.04
+  stage: test
+  dependencies:
+    - build
+  before_script:
+    - apt-get update -y
+    - apt-get install -y build-essential cmake
+  script:
+    - cd build
+    - ctest --output-on-failure --verbose

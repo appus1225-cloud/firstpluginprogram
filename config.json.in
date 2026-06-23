@@ -1,0 +1,14 @@
+{
+  "plugins": [
+    {
+      "name": "pluginA",
+      "path": "${CMAKE_BINARY_DIR}/plugins/@PLUGIN_A_FILENAME@",
+      "enabled": true
+    },
+    {
+      "name": "pluginB",
+      "path": "${CMAKE_BINARY_DIR}/plugins/@PLUGIN_B_FILENAME@",
+      "enabled": true
+    }
+  ]
+}
