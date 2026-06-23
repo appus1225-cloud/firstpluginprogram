@@ -1,30 +1,39 @@
-# .gitlab-ci.yml - Linux CI pipeline (Ubuntu)
-stages:
-  - build
-  - test
+name: CI
 
-build:
-  image: ubuntu:22.04
-  stage: build
-  before_script:
-    - apt-get update -y
-    - apt-get install -y build-essential cmake git
-  script:
-    - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-    - cmake --build build -- -j$(nproc)
-  artifacts:
-    paths:
-      - build/
-    expire_in: 1 hour
+on:
+  push:
+  pull_request:
 
-test:
-  image: ubuntu:22.04
-  stage: test
-  dependencies:
-    - build
-  before_script:
-    - apt-get update -y
-    - apt-get install -y build-essential cmake
-  script:
-    - cd build
-    - ctest --output-on-failure --verbose
+jobs:
+  build-and-test:
+    name: Build and Test (self-hosted)
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'  # checks out submodules
+
+      - name: Print environment
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la
+
+      - name: Ensure submodules initialized (defensive)
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive
+
+      - name: Configure (CMake)
+        run: |
+          mkdir -p build
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build -- -j$(nproc)
+
+      - name: Run tests
+        run: |
+          cd build
+          ctest --output-on-failure --verbose
