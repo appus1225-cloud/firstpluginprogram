@@ -1,0 +1,22 @@
+{
+  "plugins": [
+    {
+      "name": "plugin_a",
+      "path": "@CMAKE_BINARY_DIR@/plugins/@PLUGIN_A_FILENAME@",
+      "enabled": true,
+      "expected_value": 42
+    },
+    {
+      "name": "plugin_b",
+      "path": "@CMAKE_BINARY_DIR@/plugins/@PLUGIN_B_FILENAME@",
+      "enabled": true,
+      "expected_value": 7
+    },
+    {
+      "name": "plugin_c",
+      "path": "@CMAKE_BINARY_DIR@/plugins/@PLUGIN_C_FILENAME@",
+      "enabled": false,
+      "expected_value": 123
+    }
+  ]
+}
